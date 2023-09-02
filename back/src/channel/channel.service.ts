@@ -1,10 +1,11 @@
 
 import { forwardRef, Injectable, Inject } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { Channel } from '@prisma/client';
 import { CreateChannelDto, SendInviteDto } from "./controllers/channel.controller";
 import { FriendService } from '../friend/friend.service';
 import { MessageService } from "../message/message.service";
-import {Channel} from "@prisma/client";
+
 
 
 @Injectable()
@@ -43,8 +44,6 @@ export class ChannelService {
       creatorId,
     } = body;
 
-
-
     const channel = await this.prisma.channel.create({
       data: {
         name,
@@ -54,13 +53,19 @@ export class ChannelService {
           connect: { id: creatorId },
         },
         created_at: new Date(),
+        users: {
+          create: {
+            userId: creatorId,
+            isAdmin: true,
+          }
+        }
       },
       select: {
         id: true,
         creatorId: true,
         users: {
           where: {
-            id: {
+            userId: {
               not: creatorId,
             }
           }
@@ -72,16 +77,26 @@ export class ChannelService {
   }
 
 
-  async sendInvite(body: SendInviteDto) {
+
+  async sendInvite(sender: number, body: SendInviteDto) {
     const { ids, channelId } = body;
 
+    const { forbidden, sent } = await this.friendService.processInvitations(sender, ids);
 
-    for (const i of ids) {
+    const success = [];
+    for (const i of sent) {
       await this.addInvite(channelId, i);
+      success.push(i);
     }
+
+    return {
+      forbidden,
+      sent,
+      success
+    };
   }
 
-  // rename with All attribute and not just s
+// rename with All attribute and not just s
   async getAllUsersInChannel(channelId: number): Promise<any> {
     const channel = await this.prisma.userChannel.findMany({
       where: { channelId },
@@ -169,8 +184,7 @@ export class ChannelService {
       return {
         ...current,
         lastRead: lastRead[ids.indexOf(current.id)],
-        lastMessage: (await this.messageService.getLastMessageInChannel(current.id))
-      }
+        lastMessage: (await this.messageService.getLastMessageInChannel(current.id))}
     }
 
     return Promise.all(channels.map(mapFunc));
@@ -219,12 +233,54 @@ export class ChannelService {
   }
 
   async removeUserFromChannel(channelId: number, userId: number): Promise<any> {
-    await this.prisma.userChannel.deleteMany({
+    const userIdremoved = await this.prisma.userChannel.deleteMany({
+      where: { channelId: channelId, userId: userId }
+    });
+  }
+
+
+  async banUserFromChannel(channelId: number, userId: number): Promise<any> {
+    return this.prisma.userChannel.updateMany({
       where: {
-        channelId: channelId,
         userId: userId,
+        id: channelId
+       },
+      data: {
+        isBanned: true
       },
     });
+  }
 
+  async unbanUserFromChannel(channelId: number, userId: number): Promise<any> {
+    return this.prisma.userChannel.updateMany({
+      where: {
+        channelId: userId,
+        userId: userId
+       },
+      data: {
+        isBanned: false
+      },
+    });
+  }
+
+  async muteUserFromChannel(channelId: number, userId: number): Promise<any> {
+    const muteUntil = new Date();
+    muteUntil.setMinutes(muteUntil.getMinutes() + 5);
+
+    return this.prisma.userChannel.updateMany({
+      where: { channelId: channelId, userId: userId },
+      data: { isMuted: muteUntil },
+    });
+  }
+
+  async isUserMutedFromChannel(channelId: number, userId: number): Promise<boolean> {
+    const userChannel = await this.prisma.userChannel.findFirst({
+      where: { channelId: channelId, userId: userId },
+    });
+
+    const currentDateTime = new Date();
+    const muteUntil = userChannel.isMuted;
+
+    return muteUntil !== null && muteUntil > currentDateTime;
   }
 }
