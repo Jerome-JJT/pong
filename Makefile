@@ -71,7 +71,7 @@ build: env dist
 
 up: env
 	@echo $(GREEN) '🚀' - UP: Start development containers$(RESET_COLOR)
-	$(DOCKER_COMPOSE) up -d
+	$(DOCKER_COMPOSE) up
 
 action: build
 	@echo $(GREEN) '🚀' - UP: Start development containers$(RESET_COLOR)

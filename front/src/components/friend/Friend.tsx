@@ -2,13 +2,14 @@ import {Children, useState} from "react";
 import Avatar from "../utils/Avatar";
 import ContextMenu from "../utils/ContextMenu";
 import {useNavigate} from "react-router-dom";
-import {getConversation, removeFriendship, getUserByID} from "../../api";
+import { getConversation, removeFriendship, getUserByID, removeUserFromChannel } from "../../api";
 
 type Props = {
     friend: any,
     onClick?: any,
     children?: any,
     unremovable?: boolean,
+    channelId: number
 }
 
 export default function Friend(props: Props){
@@ -30,9 +31,13 @@ export default function Friend(props: Props){
             handleClick: () => getUserByID(props.friend.id).then((response) =>
                 navigate('/game?id=' + props.friend.id + '&username=' + response.data.username + '&session=' + response.data.session)),
         },
-
-
     ];
+    if(props.unremovable)
+        buttons.push({
+            text: 'Quitter le channel',
+            handleClick: () => removeUserFromChannel(props.channelId, props.friend.id).then((response)  => console.log("Click out")),
+        })
+
     if (!props.unremovable)
         buttons.push({
             text: 'Retirer l\'ami',

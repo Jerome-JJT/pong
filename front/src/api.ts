@@ -8,10 +8,33 @@ const localhostback = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_UR
 const URL = localhostback;
 export const socket = io(webSocketURL, { autoConnect: true});
 
-export async function searchUser(search, options: {friendOnly?: boolean, notFriend?: boolean} = {friendOnly: false, notFriend: false}){
+
+// export async function getChannelAllMembers(id: number){
+//     const config = {
+//         method: 'get',
+//         url: URL + `/channels/${id}/members`,
+//         withCredentials: true,
+//     };
+//     return axios(config);
+// }
+
+
+export async function removeUserFromChannel(channelId: number, userId: number)
+{
+    const config = {
+        method: 'post',
+        url: URL + '/channels/' + channelId + '/remove-user/' + userId,
+        withCredentials: true,
+    }
+    console.log(config);
+    return axios(config);
+}
+
+export async function searchUser(search, options: {friendOnly?: boolean, notFriend?: boolean} = {friendOnly: false, notFriend: false})
+{
     const config = {
         method: 'get',
-        url: URL + '/users/search/'  +search,
+        url: URL + '/users/search/'  + search,
         data: {
             options
         },
@@ -19,6 +42,7 @@ export async function searchUser(search, options: {friendOnly?: boolean, notFrie
     };
     return axios(config);
 }
+
 
 export async function getStatus(){
     var config = {

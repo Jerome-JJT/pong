@@ -29,5 +29,4 @@ export class ConversationController {
     if (Number(friendId) == user.id) throw new Error('wtf ?');
     return this.channelService.getConversation(user.id, Number(friendId));
   }
-
 }
