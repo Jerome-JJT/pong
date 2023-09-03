@@ -32,11 +32,24 @@ export default function Friend(props: Props){
                 navigate('/game?id=' + props.friend.id + '&username=' + response.data.username + '&session=' + response.data.session)),
         },
     ];
-    if(props.unremovable)
+    if(props.unremovable) {
         buttons.push({
             text: 'Quitter le channel',
-            handleClick: () => removeUserFromChannel(props.channelId, props.friend.id).then((response)  => console.log("Click out")),
+            handleClick: () => removeUserFromChannel(props.channelId, props.friend.id).then((response) => console.log("Click out")),
         })
+        buttons.push({
+            text: 'Mute',
+            handleClick: () => removeUserFromChannel(props.channelId, props.friend.id).then((response) => console.log("Mute")),
+        })
+        buttons.push({
+            text: 'Kick',
+            handleClick: () => removeUserFromChannel(props.channelId, props.friend.id).then((response) => console.log("Kick")),
+        })
+        buttons.push({
+            text: 'Ban',
+            handleClick: () => removeUserFromChannel(props.channelId, props.friend.id).then((response) => console.log("Ban")),
+        })
+    }
 
     if (!props.unremovable)
         buttons.push({

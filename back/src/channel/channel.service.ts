@@ -77,26 +77,16 @@ export class ChannelService {
   }
 
 
-
-  async sendInvite(sender: number, body: SendInviteDto) {
+  async sendInvite(body: SendInviteDto) {
     const { ids, channelId } = body;
 
-    const { forbidden, sent } = await this.friendService.processInvitations(sender, ids);
 
-    const success = [];
-    for (const i of sent) {
+    for (const i of ids) {
       await this.addInvite(channelId, i);
-      success.push(i);
     }
-
-    return {
-      forbidden,
-      sent,
-      success
-    };
   }
 
-// rename with All attribute and not just s
+  // rename with All attribute and not just s
   async getAllUsersInChannel(channelId: number): Promise<any> {
     const channel = await this.prisma.userChannel.findMany({
       where: { channelId },
@@ -184,7 +174,8 @@ export class ChannelService {
       return {
         ...current,
         lastRead: lastRead[ids.indexOf(current.id)],
-        lastMessage: (await this.messageService.getLastMessageInChannel(current.id))}
+        lastMessage: (await this.messageService.getLastMessageInChannel(current.id))
+      }
     }
 
     return Promise.all(channels.map(mapFunc));

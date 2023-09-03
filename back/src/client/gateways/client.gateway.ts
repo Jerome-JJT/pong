@@ -36,7 +36,6 @@ export class ClientGateway implements OnGatewayConnection, OnGatewayDisconnect{
     }
   }
 
-
   @SubscribeMessage('register')
   @UseGuards(WSAuthenticatedGuard)
   async handleRegister(client,data): Promise<void> {
@@ -69,5 +68,3 @@ export class ClientGateway implements OnGatewayConnection, OnGatewayDisconnect{
     }
   }
 }
-
-// async createMessage(user: number, channel: number, text: string)
