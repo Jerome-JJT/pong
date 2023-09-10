@@ -284,17 +284,6 @@ export class ChannelService {
     });
   }
 
-  async unbanUserFromChannel(channelId: number, userId: number): Promise<any> {
-    return this.prisma.userChannel.updateMany({
-      where: {
-        userId: userId,
-        id: channelId,
-      },
-      data: {
-        isBanned: false,
-      },
-    });
-  }
 
   async muteUserFromChannel(channelId: number, userId: number): Promise<any> {
     const muteUntil = new Date();

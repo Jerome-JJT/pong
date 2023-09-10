@@ -22,7 +22,9 @@ import {
   IsString,
 } from "@nestjs/class-validator";
 import { AuthenticatedGuard } from "../../auth/guards/authenticated.guard";
-import { IsAdminPipe } from "../pipes/isAdmin.pipe";
+// import { IsAdminPipe } from "../pipes/isAdmin.pipe";
+// import { IsBannedPipe } from "../pipes/isBanned.pipe";
+// import { IsInChannelPipe } from "../pipes/isInChannel.pipe";
 
 export class CreateChannelDto {
   @ApiProperty()
@@ -95,6 +97,7 @@ export class ChannelController {
   // }
 
   @Get("channels")
+  @UsePipes(IsInChannelPipe)
   @ApiOperation({ summary: "Get channels of user" })
   async getChannelOfUser(@Req() req): Promise<Channel[]> {
     const user = await req.user;
@@ -102,6 +105,7 @@ export class ChannelController {
   }
 
   @Get("channel/users")
+  @UsePipes(IsInChannelPipe)
   @ApiOperation({ summary: "Get channels of user" })
   async getAllUsersInChannel(@Req() req): Promise<Channel[]> {
     const channel = await req.channel;
@@ -109,6 +113,7 @@ export class ChannelController {
   }
 
   @Get("/:channelId/members")
+  @UsePipes(IsInChannelPipe)
   @ApiOperation({ summary: "Get All users in channel by channel Id" })
   async getChannelAllMembers(
     @Param("channelId", ParseIntPipe) channelId: number,
@@ -126,7 +131,7 @@ export class ChannelController {
   }
 
   @Post("/:channelId/admin-quit/:userId")
-  @UsePipes(IsAdminPipe)
+  // @UsePipes(IsAdminPipe)
   @ApiOperation({ summary: "Remove a user from a channel (Admin perspective)" })
   async removeUserAdminFromChannel(
     @Param("channelId", ParseIntPipe) channelId: number,
@@ -136,7 +141,7 @@ export class ChannelController {
   }
 
   @Post("/:channelId/ban/:userId")
-  @UsePipes(IsAdminPipe)
+  // @UsePipes(IsAdminPipe)
   @ApiOperation({ summary: "Ban a user from a channel" })
   async banUserFromChannel(
     @Param("channelId", ParseIntPipe) channelId: number,
@@ -145,15 +150,6 @@ export class ChannelController {
     return this.channelService.banUserFromChannel(channelId, userId);
   }
 
-  @Post("/:channelId/unban/:userId")
-  @UsePipes(IsAdminPipe)
-  @ApiOperation({ summary: "Un-Ban a user from a channel" })
-  async unbanUserFromChannel(
-    @Param("channelId", ParseIntPipe) channelId: number,
-    @Param("userId", ParseIntPipe) userId: number,
-  ): Promise<any> {
-    return this.channelService.unbanUserFromChannel(channelId, userId);
-  }
 
   @Post("/:channelId/mute/:userId")
   @ApiOperation({ summary: "Mute a user from a channel" })

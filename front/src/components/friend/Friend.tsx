@@ -13,9 +13,7 @@ type Props = {
   channelId: number,
   children?: any,
   friend: User,
-  isAdmin: boolean,
   onClick?: any,
-  isBanned: boolean,
   contextMenu?: any[],
 };
 

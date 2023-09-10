@@ -38,6 +38,7 @@ export default function ChannelMembersList({
     return member.userId === user.id && member.isAdmin === true;
   });
 
+  console.log("isAdmin = ", isAdmin);
 
 
 
@@ -53,7 +54,7 @@ export default function ChannelMembersList({
                 key={current.user.id}
                 friend={current.user}
                 channelId={channelId}
-                contextMenu={(isAdmin && current.user.id != user.id) ? [
+                contextMenu={(isAdmin === true && current.user.id != user.id) ? [
                     {
                     text: "Kick",
                     handleClick: () =>
@@ -65,13 +66,10 @@ export default function ChannelMembersList({
                     },
                     {
                         text: "Ban",
-                        handleClick: () =>
-                             banUserFromChannel(channelId, current.user.id)
+                        handleClick: () => banUserFromChannel(channelId, current.user.id),
                     },
                     { separator: true }
                 ] : null}
-                isAdmin={isAdmin}
-                isBanned={current.isBanned}
               ></Friend>
             );
           })}

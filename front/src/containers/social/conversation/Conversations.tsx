@@ -28,7 +28,7 @@ export default function Conversations({ state }: Props) {
     setPopUpPosition({
       left: event.clientX,
       top: event.clientY,
-      width: "420px",
+      // width: "420px",
     });
   };
 

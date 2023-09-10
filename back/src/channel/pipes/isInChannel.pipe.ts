@@ -7,7 +7,7 @@
 // import { PrismaService } from "../../prisma/prisma.service";
 //
 // @Injectable()
-// export class isBannedPipe implements PipeTransform {
+// export class isInChannelPipe implements PipeTransform {
 //     constructor(private prisma: PrismaService) {}
 //
 //     async transform(value: any, _metadata: ArgumentMetadata) {
@@ -17,9 +17,10 @@
 //             where: { channelId: channelId, userId: userId },
 //         });
 //
-//         if (!userChannel.isBanned) {
-//             throw new ForbiddenException("User is ban of this channel.");
+//         if (!userChannel) {
+//             throw new ForbiddenException("User is not a member of this channel.");
 //         }
+//
 //         return value;
 //     }
 // }
