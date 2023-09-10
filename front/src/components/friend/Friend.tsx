@@ -5,11 +5,6 @@ import { useNavigate } from "react-router-dom";
 import {
   getConversation,
   removeFriendship,
-  removeUserFromChannel,
-  muteUserFromChannel,
-  banUserFromChannel,
-  removeUserAdminFromChannel,
-  unbanUserFromChannel,
   getUserByID, unblockUser,
 } from "../../api";
 import { AuthContext, User } from "../../containers/Auth";
@@ -22,7 +17,6 @@ type Props = {
   onClick?: any,
   isBanned: boolean,
   contextMenu?: any[],
-  buttonProps: unknown
 };
 
 export default function Friend(props: Props) {
@@ -123,23 +117,22 @@ export default function Friend(props: Props) {
     },
   };
 
-
-  const navigateToConversation = async (friend) => {
-    try {
-      const response = await getConversation(friend.id);
-      navigate("/social/" + response.data.id);
-    } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        console.error(`Error: ${error.response.data.message}`);
-      } else {
-        console.error("Error while fetching conversation.");
-      }
-    }
-  };
+  // const navigateToConversation = async (friend) => {
+  //   try {
+  //     const response = await getConversation(friend.id);
+  //     navigate("/social/" + response.data.id);
+  //   } catch (error) {
+  //     if (
+  //       error.response &&
+  //       error.response.data &&
+  //       error.response.data.message
+  //     ) {
+  //       console.error(`Error: ${error.response.data.message}`);
+  //     } else {
+  //       console.error("Error while fetching conversation.");
+  //     }
+  //   }
+  // };
 
   return (
     <ContextMenu buttons={buttons} buttonProps={buttonProps}>

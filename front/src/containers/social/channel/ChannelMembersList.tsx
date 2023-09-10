@@ -51,7 +51,6 @@ export default function ChannelMembersList({
             return (
               <Friend
                 key={current.user.id}
-                unremovable={true}
                 friend={current.user}
                 channelId={channelId}
                 contextMenu={(isAdmin && current.user.id != user.id) ? [
